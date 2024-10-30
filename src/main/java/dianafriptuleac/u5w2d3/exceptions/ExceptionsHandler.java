@@ -11,20 +11,20 @@ import java.time.LocalDateTime;
 public class ExceptionsHandler {
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
-    public dianafriptuleac.u5d8.payloads.ErrorsPayload handleBadrequest(BadRequestException ex) {
-        return new dianafriptuleac.u5d8.payloads.ErrorsPayload(ex.getMessage(), LocalDateTime.now());
+    public dianafriptuleac.u5w2d3.payloads.ErrorsPayload handleBadrequest(BadRequestException ex) {
+        return new dianafriptuleac.u5w2d3.payloads.ErrorsPayload(ex.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND) // 404
-    public dianafriptuleac.u5d8.payloads.ErrorsPayload handleNotFound(NotFoundException ex) {
-        return new dianafriptuleac.u5d8.payloads.ErrorsPayload(ex.getMessage(), LocalDateTime.now());
+    public dianafriptuleac.u5w2d3.payloads.ErrorsPayload handleNotFound(NotFoundException ex) {
+        return new dianafriptuleac.u5w2d3.payloads.ErrorsPayload(ex.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
-    public dianafriptuleac.u5d8.payloads.ErrorsPayload handleGeneric(Exception ex) {
+    public dianafriptuleac.u5w2d3.payloads.ErrorsPayload handleGeneric(Exception ex) {
         ex.printStackTrace();
-        return new dianafriptuleac.u5d8.payloads.ErrorsPayload("Problema lato server!", LocalDateTime.now());
+        return new dianafriptuleac.u5w2d3.payloads.ErrorsPayload("Problema lato server!", LocalDateTime.now());
     }
 }

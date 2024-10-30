@@ -63,14 +63,11 @@ public class BlogPostService {
             blogPost.setContenuto(body.getContenuto());
             blogPost.setCategoria(body.getCategoria());
             blogPost.setTempoDiLettura(body.getTempoDiLettura());
-
-
             if (body.getAutoreId() != null) {
                 Autore autore = autoreRepository.findById(body.getAutoreId())
                         .orElseThrow(() -> new NotFoundException(body.getAutoreId()));
                 blogPost.setAutore(autore);
             }
-
             return this.blogPostRepository.save(blogPost);
         }).orElseThrow(() -> new NotFoundException(blogPostId));
     }
