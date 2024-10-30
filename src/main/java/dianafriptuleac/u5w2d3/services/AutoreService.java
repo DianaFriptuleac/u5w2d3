@@ -6,6 +6,8 @@ import dianafriptuleac.u5w2d3.exceptions.BadRequestException;
 import dianafriptuleac.u5w2d3.exceptions.NotFoundException;
 import dianafriptuleac.u5w2d3.payloads.NewAutorePayload;
 import dianafriptuleac.u5w2d3.repositories.AutoreRepository;
+import dianafriptuleac.u5w2d3.repositories.BlogPostRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
 public class AutoreService {
     @Autowired
     private AutoreRepository autoreRepository;
+    @Autowired
+    private BlogPostRepository blogPostRepository;
 
 
     //Salvo un nuovo autore
@@ -62,8 +66,10 @@ public class AutoreService {
     }
 
     //Trovo autore per id e cancello
+    @Transactional //completto l'eleminazione correttamente
     public void findByIdAutoreAndDelete(long autoreId) {
         Autore foundAutore = this.findAutoreById(autoreId);
+        blogPostRepository.deleteAllByAutore(foundAutore);
         this.autoreRepository.delete(foundAutore);
     }
 }

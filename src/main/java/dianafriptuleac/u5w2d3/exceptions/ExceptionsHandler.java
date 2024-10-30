@@ -1,5 +1,6 @@
 package dianafriptuleac.u5w2d3.exceptions;
 
+import dianafriptuleac.u5w2d3.payloads.ErrorsPayload;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -9,22 +10,22 @@ import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public class ExceptionsHandler {
-    @ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler(BadRequestException.class)//specifico quale eccezione gestire
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
-    public dianafriptuleac.u5w2d3.payloads.ErrorsPayload handleBadrequest(BadRequestException ex) {
-        return new dianafriptuleac.u5w2d3.payloads.ErrorsPayload(ex.getMessage(), LocalDateTime.now());
+    public ErrorsPayload handleBadrequest(BadRequestException ex) {
+        return new ErrorsPayload(ex.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND) // 404
-    public dianafriptuleac.u5w2d3.payloads.ErrorsPayload handleNotFound(NotFoundException ex) {
-        return new dianafriptuleac.u5w2d3.payloads.ErrorsPayload(ex.getMessage(), LocalDateTime.now());
+    public ErrorsPayload handleNotFound(NotFoundException ex) {
+        return new ErrorsPayload(ex.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
-    public dianafriptuleac.u5w2d3.payloads.ErrorsPayload handleGeneric(Exception ex) {
+    public ErrorsPayload handleGeneric(Exception ex) {
         ex.printStackTrace();
-        return new dianafriptuleac.u5w2d3.payloads.ErrorsPayload("Problema lato server!", LocalDateTime.now());
+        return new ErrorsPayload("Problema lato server!", LocalDateTime.now());
     }
 }

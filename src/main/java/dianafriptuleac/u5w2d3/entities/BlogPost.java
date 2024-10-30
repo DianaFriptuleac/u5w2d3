@@ -22,7 +22,7 @@ public class BlogPost {
     private String cover;
     private String contenuto;
     private LocalDateTime tempoDiLettura;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "autore_id")
     private Autore autore;
 
