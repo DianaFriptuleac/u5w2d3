@@ -16,4 +16,6 @@ public class NewBlogPostPayload {
     private String titolo;
     private String contenuto;
     private LocalDateTime tempoDiLettura;
+    private Long autoreId;
+
 }

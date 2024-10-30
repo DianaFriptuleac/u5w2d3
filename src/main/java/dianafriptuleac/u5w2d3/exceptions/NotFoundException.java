@@ -1,7 +1,7 @@
 package dianafriptuleac.u5w2d3.exceptions;
 
 public class NotFoundException extends RuntimeException {
-    public NotFoundException(long id) {
+    public NotFoundException(Long id) {
 
         super("Elemento con id: " + id + " non trovato!");
     }

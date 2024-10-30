@@ -5,10 +5,10 @@ import dianafriptuleac.u5w2d3.entities.BlogPost;
 import dianafriptuleac.u5w2d3.payloads.NewBlogPostPayload;
 import dianafriptuleac.u5w2d3.services.BlogPostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/blogpost")
@@ -18,14 +18,15 @@ public class BlogPostController {
 
     // 1. GET http://localhost:3002/blogpost
     @GetMapping
-    public List<BlogPost> getAllBlogPost() {
-        return this.blogPostService.findAll();
+    public Page<BlogPost> findAllBlogPost(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
+                                          @RequestParam(defaultValue = "id") String sortBy) {
+        return this.blogPostService.findAll(page, size, sortBy);
     }
 
     //3. POST http://localhost:3002/blogpost (+ payload)
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BlogPost createBlogPost(@RequestBody NewBlogPostPayload body) {
+    public BlogPost createBlogPost(@Validated @RequestBody NewBlogPostPayload body) {
         return this.blogPostService.saveBlogPost(body);
     }
 

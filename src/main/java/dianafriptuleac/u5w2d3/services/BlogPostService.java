@@ -1,58 +1,84 @@
 package dianafriptuleac.u5w2d3.services;
 
 
+import dianafriptuleac.u5w2d3.entities.Autore;
 import dianafriptuleac.u5w2d3.entities.BlogPost;
 import dianafriptuleac.u5w2d3.exceptions.NotFoundException;
 import dianafriptuleac.u5w2d3.payloads.NewBlogPostPayload;
+import dianafriptuleac.u5w2d3.repositories.AutoreRepository;
+import dianafriptuleac.u5w2d3.repositories.BlogPostRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 @Service
 public class BlogPostService {
-    private List<BlogPost> blogPostList = new ArrayList<>();
+    @Autowired
+    private BlogPostRepository blogPostRepository;
 
-    //Trovo la lista
-    public List<BlogPost> findAll() {
-        return this.blogPostList;
+    @Autowired
+    private AutoreRepository autoreRepository;
+
+    //Trovo tutti i blogPost
+    public Page<BlogPost> findAll(int page, int size, String sortBy) {
+        if (size > 100)
+            size = 100;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return this.blogPostRepository.findAll(pageable);
     }
 
     // Salvo un nuovo BlogPost alla lista
     public BlogPost saveBlogPost(NewBlogPostPayload body) {
-        Random random = new Random();
-        BlogPost newBlogPost = new BlogPost(body.getCategoria(), body.getTitolo(),
-                body.getContenuto(), body.getTempoDiLettura());
-        newBlogPost.setId(random.nextInt(1, 5000));
+        if (body.getAutoreId() == null) {
+            throw new IllegalArgumentException("L'id dell'autore è obbligatorio");
+        }
+
+        Autore autore = autoreRepository.findById(body.getAutoreId())
+                .orElseThrow(() -> new NotFoundException(body.getAutoreId()));
+
+        BlogPost newBlogPost = new BlogPost(
+                body.getCategoria(),
+                body.getTitolo(),
+                body.getContenuto(),
+                body.getTempoDiLettura(),
+                autore
+        );
         newBlogPost.setCover("https://placedog.net/400x200");
-        this.blogPostList.add(newBlogPost);
-        return newBlogPost;
+        return this.blogPostRepository.save(newBlogPost);
     }
+
 
     //Trovo un blogPost per ID
     public BlogPost findById(long blogPostId) {
-        return this.blogPostList.stream().filter(blogPost ->
-                blogPost.getId() == blogPostId).findFirst().orElseThrow(() ->
-                new NotFoundException(blogPostId));
+        return this.blogPostRepository.findById(blogPostId)
+                .orElseThrow(() -> new NotFoundException(blogPostId));
     }
 
-    //Trovo blogPost per id and update
     public BlogPost findByIdAndUpdate(long blogPostId, NewBlogPostPayload body) {
-        return this.blogPostList.stream().filter(blogPost -> blogPost.getId() == blogPostId).findFirst().map(blogPost ->
-        {
+        return this.blogPostRepository.findById(blogPostId).map(blogPost -> {
             blogPost.setTitolo(body.getTitolo());
             blogPost.setContenuto(body.getContenuto());
             blogPost.setCategoria(body.getCategoria());
             blogPost.setTempoDiLettura(body.getTempoDiLettura());
-            return blogPost;
+
+
+            if (body.getAutoreId() != null) {
+                Autore autore = autoreRepository.findById(body.getAutoreId())
+                        .orElseThrow(() -> new NotFoundException(body.getAutoreId()));
+                blogPost.setAutore(autore);
+            }
+
+            return this.blogPostRepository.save(blogPost);
         }).orElseThrow(() -> new NotFoundException(blogPostId));
     }
 
     //Trovo blogPost per id e cancello
     public void findByIdAndDelete(long blogPostId) {
-        BlogPost blogPostDelete = this.blogPostList.stream().filter(blogPost -> blogPost.getId() == blogPostId).
-                findFirst().orElseThrow(() -> new NotFoundException(blogPostId));
-        this.blogPostList.remove(blogPostDelete);
+        BlogPost blogPostDelete = this.blogPostRepository.findById(blogPostId)
+                .orElseThrow(() -> new NotFoundException(blogPostId));
+        this.blogPostRepository.delete(blogPostDelete);
     }
 }

@@ -5,10 +5,10 @@ import dianafriptuleac.u5w2d3.entities.Autore;
 import dianafriptuleac.u5w2d3.payloads.NewAutorePayload;
 import dianafriptuleac.u5w2d3.services.AutoreService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/autori")
@@ -18,14 +18,16 @@ public class AutoreController {
 
     //1.Get http://localhost:3002/autori
     @GetMapping
-    public List<Autore> getAutore() {
-        return this.autoreService.findAllAutori();
+    public Page<Autore> getAutore(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
+                                  @RequestParam(defaultValue = "id") String sortBy) {
+        return this.autoreService.findAllAutori(page, size, sortBy);
     }
 
     //2. Post http://localhost:3002/autori = payload
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Autore createAutore(@RequestBody NewAutorePayload body) {
+
         return this.autoreService.saveAutore(body);
     }
 
